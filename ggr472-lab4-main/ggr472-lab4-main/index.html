@@ -5,20 +5,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGR472 Lab 4</title>
+    <title>Map</title>
     <!-- mapbox API -->
-    <script src='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css' rel='stylesheet' />
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
     <!-- Turf.js -->
-    <script src='https://unpkg.com/@turf/turf@7.2.0/turf.min.js'></script>
+    <script src='https://unpkg.com/@turf/turf/turf.min.js'></script>
 </head>
 
 <body>
 
     <!-- MAP CONTAINER -->
     <div id='map' class='map'></div>
+
+    <div id="legend-box" class="legend-box">
+        <h5 class="text-center mb-2">Legend</h5>
+        <ul class="list-unstyled mb-0">
+            <li><span class="legend-icon collisions-0"></span> 0 collisions</li>
+            <li><span class="legend-icon collisions-1-10"></span> 1-10 collisions</li>
+            <li><span class="legend-icon collisions-11-20"></span> 11-20 collisions</li>
+            <li><span class="legend-icon collisions-21-50"></span> 21-50 collisions</li>
+            <li><span class="legend-icon collisions-51-100"></span> 51-100 collisions</li>
+        
+        </ul>
+
+        <button id="toggle-hexgrid">Hexgrid</button>
+        
+    </div>
 
     <script src="script.js"></script>
 

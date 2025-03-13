@@ -7,4 +7,39 @@
     width: 100%;
 }
 
+/* legend */
+#legend-box {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #f0f0f0 !important;
+    color: #333; 
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
 
+.legend-icon {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+.collisions-0 {
+    background-color: #FFEDA0;
+}
+.collisions-1-10 {
+    background-color: #FED976;
+}
+.collisions-11-20 {
+    background-color: #FEB24C;
+}   
+.collisions-21-50 {
+    background-color: #FD8D3C;
+}   
+.collisions-51-100 {
+    background-color: #FC4E2A;
+}
