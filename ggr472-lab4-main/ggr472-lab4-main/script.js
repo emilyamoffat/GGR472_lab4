@@ -20,9 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /*--------------------------------------------------------------------
     Step 2: VIEW GEOJSON POINT DATA ON MAP
     --------------------------------------------------------------------*/
-    //HINT: Create an empty variable
-    //      Use the fetch method to access the GeoJSON from your online repository
-    //      Convert the response to JSON format and then store the response in your new variable
     map.on('load', () => {
         // Fetch the GeoJSON data
         fetch('https://raw.githubusercontent.com/emilyamoffat/GGR472_lab4/main/pedcyc_collision_06-21_v2.geojson')
@@ -30,21 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(collision_data => {
                 console.log('Collision data:', collision_data);
 
-    /*--------------------------------------------------------------------
-        Step 3: CREATE BOUNDING BOX AND HEXGRID
-    --------------------------------------------------------------------*/
-    //HINT: All code to create and view the hexgrid will go inside a map load event handler
-    //      First create a bounding box around the collision point data
-    //      Access and store the bounding box coordinates as an array variable
-    //      Use bounding box coordinates as argument in the turf hexgrid function
-    //      **Option: You may want to consider how to increase the size of your bbox to enable greater geog coverage of your hexgrid
-    //                Consider return types from different turf functions and required argument types carefully here
-
+                /*--------------------------------------------------------------------
+                Step 3: CREATE BOUNDING BOX AND HEXGRID
+                --------------------------------------------------------------------*/
                 let bbox = turf.bbox(collision_data);
                 console.log('Bounding box:', bbox);
 
                 let hexgrid = turf.hexGrid(bbox, 0.5, { units: 'kilometers' });
-                console.log('Hexgrid:', hexgrid);
+                console.log('Hexgrid before filtering:', hexgrid);
+            
+
+                // Aggregate collisions by hexgrid and filter out hexagons with zero collisions
+                hexgrid.features.forEach(hex => {
+                    const pointsInHex = turf.pointsWithinPolygon(collision_data, hex);
+                    hex.properties.collision_count = pointsInHex.features.length || 0;
+                });
+
+                hexgrid.features = hexgrid.features.filter(hex => hex.properties.collision_count > 0);
+                console.log('Hexgrid after filtering:', hexgrid);
 
                 map.addSource('hexgrid', {
                     'type': 'geojson',
@@ -71,16 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-    /*--------------------------------------------------------------------
-    Step 4: AGGREGATE COLLISIONS BY HEXGRID
-    --------------------------------------------------------------------*/
-    //HINT: Use Turf collect function to collect all '_id' properties from the collision points data for each heaxagon
-    //      View the collect output in the console. Where there are no intersecting points in polygons, arrays will be empty
-                hexgrid.features.forEach(hex => {
-                    const pointsInHex = turf.pointsWithinPolygon(collision_data, hex);
-                    hex.properties.collision_count = pointsInHex.features.length || 0;
-                });
-
+                /*--------------------------------------------------------------------
+                Step 4: AGGREGATE COLLISIONS BY HEXGRID
+                --------------------------------------------------------------------*/
                 map.getSource('hexgrid').setData(hexgrid);
 
                 map.on('click', 'hexgrid', (e) => {
@@ -94,15 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /*--------------------------------------------------------------------
-    // Step 5: FINALIZE YOUR WEB MAP
-    // --------------------------------------------------------------------*/
-    //HINT: Think about the display of your data and usability of your web map.
-    //      Update the addlayer paint properties for your hexgrid using:
-    //        - an expression
-    //        - The COUNT attribute
-    //        - The maximum number of collisions found in a hexagon
-    //      Add a legend and additional functionality including pop-up windows
-
+    Step 5: FINALIZE YOUR WEB MAP
+    --------------------------------------------------------------------*/
     // Add event listener to toggle hexgrid layer
     document.getElementById('toggle-hexgrid').addEventListener('click', () => {
         const visibility = map.getLayoutProperty('hexgrid', 'visibility');
