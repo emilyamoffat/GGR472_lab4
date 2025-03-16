@@ -22,20 +22,29 @@ document.addEventListener('DOMContentLoaded', () => {
     --------------------------------------------------------------------*/
     map.on('load', () => {
         // Fetch the GeoJSON data
+        //      Convert the response to JSON format and then store the response in your new variable
         fetch('https://raw.githubusercontent.com/emilyamoffat/GGR472_lab4/main/pedcyc_collision_06-21_v2.geojson')
             .then(response => response.json())
+
+            /*--------------------------------------------------------------------
+                Step 3: CREATE BOUNDING BOX AND HEXGRID
+                --------------------------------------------------------------------*/
+            
+
             .then(collision_data => {
                 console.log('Collision data:', collision_data);
 
-                /*--------------------------------------------------------------------
-                Step 3: CREATE BOUNDING BOX AND HEXGRID
-                --------------------------------------------------------------------*/
+                //      First create a bounding box around the collision point data
                 let bbox = turf.bbox(collision_data);
                 console.log('Bounding box:', bbox);
 
+                //      Use bounding box coordinates as argument in the turf hexgrid function
                 let hexgrid = turf.hexGrid(bbox, 0.5, { units: 'kilometers' });
                 console.log('Hexgrid before filtering:', hexgrid);
             
+                /*--------------------------------------------------------------------
+                Step 4: AGGREGATE COLLISIONS BY HEXGRID
+                --------------------------------------------------------------------*/
 
                 // Aggregate collisions by hexgrid and filter out hexagons with zero collisions
                 hexgrid.features.forEach(hex => {
@@ -71,9 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                /*--------------------------------------------------------------------
-                Step 4: AGGREGATE COLLISIONS BY HEXGRID
-                --------------------------------------------------------------------*/
                 map.getSource('hexgrid').setData(hexgrid);
 
                 map.on('click', 'hexgrid', (e) => {
